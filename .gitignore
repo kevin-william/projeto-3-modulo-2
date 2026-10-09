@@ -1,0 +1,65 @@
+# ==============================================================================
+# GitIgnore Unificado — Projeto Integrado de Visão Computacional (Módulo 2)
+# ==============================================================================
+
+# Ambientes virtuais Python
+.venv/
+venv/
+env/
+ENV/
+*.venv/
+
+# Caches Python e Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*.ipynb_checkpoints
+
+# Caches e arquivos temporários do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.log
+*.sqlite
+*.db
+
+# Configurações de IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ==============================================================================
+# Modelos Binários Pesados e Checkpoints (> 50 MB)
+# ==============================================================================
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.bin
+
+# Caches locais e temporários de execução
+projeto-*/cache/
+cache/
+revisao_*.tmp/
+*.tmp
+*.log
+
+# Execuções locais: dados, checkpoints e relatórios de execução gerados em tempo de execução
+projeto-1/resultados/
+projeto-2/resultados/
+projeto-3/resultados/
+

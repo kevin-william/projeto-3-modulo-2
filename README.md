@@ -17,31 +17,38 @@ O [relatório técnico consolidado](relatorio/Projeto_da_Disciplina.pdf), de 41 
 
 ```text
 projeto-3-modulo-2/
-├── README.md
-├── .gitignore
-├── projeto-1/
-│   ├── README.md
-│   ├── requirements.txt
-│   └── A1_vision_transformers.ipynb
-├── projeto-2/
-│   ├── README.md
-│   ├── requirements.txt
-│   └── A2_clip_ads16.ipynb
-├── projeto-3/
-│   ├── README.md
-│   ├── requirements.txt
-│   └── A3_cnn_kaggle.ipynb
-├── projeto-4/
-│   ├── README.md
-│   ├── requirements.txt
-│   ├── A4_estudo_caso_raio_x.ipynb
-│   ├── atividade_4_1_plano_de_acao.docx
-│   └── atividade_4_2_trafego_urbano.docx
-└── relatorio/
-    └── Projeto_da_Disciplina.pdf
+├── README.md                                  # Visão geral unificada do repositório
+├── .gitignore                                 # Regras de exclusão de caches e artefatos
+│
+├── projeto-1/                                 # Projeto 1 — Vision Transformers
+│   ├── A1_vision_transformers.ipynb           # Notebook principal de execução
+│   ├── README.md                              # Documentação e resultados do Projeto 1
+│   └── requirements.txt                       # Dependências do Projeto 1
+│
+├── projeto-2/                                 # Projeto 2 — CLIP e busca multimodal
+│   ├── A2_clip_ads16.ipynb                    # Notebook principal de execução
+│   ├── README.md                              # Documentação e resultados do Projeto 2
+│   └── requirements.txt                       # Dependências do Projeto 2
+│
+├── projeto-3/                                 # Projeto 3 — CNN e feature extraction
+│   ├── A3_cnn_kaggle.ipynb                    # Notebook principal de execução
+│   ├── README.md                              # Documentação e resultados do Projeto 3
+│   └── requirements.txt                       # Dependências do Projeto 3
+│
+├── projeto-4/                                 # Projeto 4 — cGAN e estudos de caso
+│   ├── A4_estudo_caso_raio_x.ipynb            # Notebook principal de execução
+│   ├── atividade_4_1_plano_de_acao.docx       # Relatório clínico e plano de ação (Atividade 4.1)
+│   ├── atividade_4_2_trafego_urbano.docx      # Análise textual de tráfego urbano (Atividade 4.2)
+│   ├── dados/                                 # Partição congelada e radiografias reais (pasta local)
+│   ├── resultados/                            # Evidências experimentais geradas nas execuções locais
+│   ├── README.md                              # Documentação e resultados do Projeto 4
+│   └── requirements.txt                       # Dependências do Projeto 4
+│
+└── relatorio/                                 # Relatório técnico consolidado, versionado no Git
+    └── Projeto_da_Disciplina.pdf              # Relatório dos quatro projetos, com resultados e apêndices
 ```
 
-A árvore apresenta as entregas versionadas. Na execução local, o Projeto 4 também exige `projeto-4/dados/particoes.csv` e as radiografias em `dados/Normal/`, `dados/Pneumonia/` e `dados/COVID-19/`. Essa pasta foi restaurada no workspace; sua presença local não implica inclusão no Git. Os notebooks geram pastas `resultados/`; o Projeto 4 também usa `cache/`. Dados, caches e checkpoints não estão incorporados ao PDF.
+A árvore apresenta as entregas versionadas e as pastas locais de dados e resultados do Projeto 4. Na execução local, o Projeto 4 também exige `projeto-4/dados/particoes.csv` e as radiografias em `dados/Normal/`, `dados/Pneumonia/` e `dados/COVID-19/`. Essa pasta foi restaurada no workspace; sua presença local não implica inclusão no Git. Os notebooks geram pastas `resultados/`; o Projeto 4 também usa `cache/`. Dados, caches e checkpoints não estão incorporados ao PDF.
 
 ## Resultados registrados
 

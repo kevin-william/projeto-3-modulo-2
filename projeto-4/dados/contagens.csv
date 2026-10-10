@@ -1,0 +1,4 @@
+label,test,train,val
+Normal,120,600,120
+Pneumonia,35,171,34
+COVID-19,17,86,17

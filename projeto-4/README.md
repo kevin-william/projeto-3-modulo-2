@@ -8,9 +8,9 @@
 - [Atividade 4.1 — Plano de ação](atividade_4_1_plano_de_acao.docx): cinco problemas, impactos clínicos, plano integrado, protocolo e resultados da análise anterior.
 - [Atividade 4.2 — Tráfego urbano](atividade_4_2_trafego_urbano.docx): quatro problemas, impactos, soluções e plano de avaliação. É uma análise textual; não há implementação de trânsito.
 
-Esses arquivos, `README.md` e `requirements.txt` são as entregas versionadas nesta pasta. O relatório consolidado fica em `../relatorio/Projeto_da_Disciplina.pdf` e inclui a execução de 08/10/2026 e a ablação; os DOCX preservam a análise anterior.
+Esses arquivos, `README.md`, `requirements.txt` e a pasta `dados/` são as entregas versionadas nesta pasta. O relatório consolidado fica em `../relatorio/Projeto_da_Disciplina.pdf` e inclui a execução de 08/10/2026 e a ablação; os DOCX preservam a análise anterior.
 
-Localmente, `dados/` contém a coorte e o manifesto; `cache/` guarda pesos e arquivos temporários; `resultados/` recebe registros, métricas, previsões, imagens e checkpoints. A pasta `dados/` foi restaurada no workspace em 09/10/2026, mas está fora do conjunto de arquivos versionados nesta revisão. As pastas das execuções históricas citadas abaixo não estão presentes neste checkout. O notebook contém toda a implementação, sem exigir scripts externos, e grava registros estruturados em `.txt` e tabelas em CSV.
+A pasta versionada `dados/` contém a coorte, o manifesto, as contagens e a política de uso; localmente, `cache/` guarda pesos e arquivos temporários; `resultados/` recebe registros, métricas, previsões, imagens e checkpoints. A pasta `dados/` foi restaurada e incluída no Git em 09/10/2026. As pastas das execuções históricas citadas abaixo não estão presentes neste checkout. O notebook contém toda a implementação, sem exigir scripts externos, e grava registros estruturados em `.txt` e tabelas em CSV.
 
 ## Executar e pré-requisitos
 
@@ -18,7 +18,7 @@ Instale as dependências de [requirements.txt](requirements.txt), selecione o ke
 
 Execute a partir de `projeto-4/` ou da raiz do repositório. A primeira célula de código exige `projeto-4/dados/particoes.csv` (ou `dados/particoes.csv`, quando executada nesta pasta). Embora exista uma busca posterior por manifestos históricos, ela não substitui esse requisito inicial.
 
-A coorte local contém 1.200 radiografias: 840 Normal, 240 Pneumonia e 120 COVID-19, em `dados/Normal/`, `dados/Pneumonia/` e `dados/COVID-19/`. A conferência da restauração encontrou todos os arquivos, 1.200 hashes SHA-256 únicos e nenhuma divergência com o manifesto. O notebook também verifica legibilidade e separação de grupos e hashes perceptuais entre partições.
+A coorte versionada contém 1.200 radiografias: 840 Normal, 240 Pneumonia e 120 COVID-19, em `dados/Normal/`, `dados/Pneumonia/` e `dados/COVID-19/`. A conferência da restauração encontrou todos os arquivos, 1.200 hashes SHA-256 únicos e nenhuma divergência com o manifesto. O notebook também verifica legibilidade e separação de grupos e hashes perceptuais entre partições.
 
 | Classe | Treino | Validação | Teste |
 |---|---:|---:|---:|

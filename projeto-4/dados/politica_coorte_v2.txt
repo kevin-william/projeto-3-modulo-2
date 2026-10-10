@@ -1,0 +1,28 @@
+{'version': 'v2',
+ 'status': 'Candidata técnica; revisão humana e correspondência por imagem pendentes',
+ 'allowed_sources': ['https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia',
+                     'https://github.com/ml-workgroup/covid-19-image-repository/tree/master/png'],
+ 'excluded_members': {'COVID-19_Radiography_Dataset/COVID/images/COVID-497.png': 'Versão quase '
+                                                                                 'idêntica de '
+                                                                                 'COVID-287.png; '
+                                                                                 'origem Eurorad '
+                                                                                 'não confirmada'},
+ 'exclude_identical_phash': True,
+ 'evidence_date': '2026-10-02',
+ 'source_evidence': [{'url': 'https://github.com/ml-workgroup/covid-19-image-repository',
+                      'license': 'CC BY 3.0',
+                      'attribution': 'Hannover Medical School; COVID-19 Image Repository; DOI '
+                                     '10.6084/m9.figshare.12275009',
+                      'license_url': 'https://creativecommons.org/licenses/by/3.0/',
+                      'finding': 'Repositório declara licença para dados e imagens; permite '
+                                 'adaptação com atribuição.',
+                      'remaining': 'Vincular PNGs renomeados do agregado aos arquivos originais.'},
+                     {'url': 'https://data.mendeley.com/datasets/rscbjbr9sj/2',
+                      'license': 'CC BY 4.0',
+                      'attribution': 'Daniel Kermany, Kang Zhang, Michael Goldbaum; DOI '
+                                     '10.17632/rscbjbr9sj.2',
+                      'license_url': 'https://creativecommons.org/licenses/by/4.0/',
+                      'finding': 'Depósito original declara CC BY 4.0; permite adaptação com '
+                                 'atribuição.',
+                      'remaining': 'Vincular PNGs Normal/Viral Pneumonia do agregado ao depósito '
+                                   'original.'}]}

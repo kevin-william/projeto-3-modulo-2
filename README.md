@@ -39,7 +39,7 @@ projeto-3-modulo-2/
 │   ├── A4_estudo_caso_raio_x.ipynb            # Notebook principal de execução
 │   ├── atividade_4_1_plano_de_acao.docx       # Relatório clínico e plano de ação (Atividade 4.1)
 │   ├── atividade_4_2_trafego_urbano.docx      # Análise textual de tráfego urbano (Atividade 4.2)
-│   ├── dados/                                 # Partição congelada e radiografias reais (pasta local)
+│   ├── dados/                                 # Partição congelada e radiografias reais, versionadas
 │   ├── resultados/                            # Evidências experimentais geradas nas execuções locais
 │   ├── README.md                              # Documentação e resultados do Projeto 4
 │   └── requirements.txt                       # Dependências do Projeto 4
@@ -48,7 +48,7 @@ projeto-3-modulo-2/
     └── Projeto_da_Disciplina.pdf              # Relatório dos quatro projetos, com resultados e apêndices
 ```
 
-A árvore apresenta as entregas versionadas e as pastas locais de dados e resultados do Projeto 4. Na execução local, o Projeto 4 também exige `projeto-4/dados/particoes.csv` e as radiografias em `dados/Normal/`, `dados/Pneumonia/` e `dados/COVID-19/`. Essa pasta foi restaurada no workspace; sua presença local não implica inclusão no Git. Os notebooks geram pastas `resultados/`; o Projeto 4 também usa `cache/`. Dados, caches e checkpoints não estão incorporados ao PDF.
+A árvore apresenta as entregas versionadas, incluindo os dados do Projeto 4, e a pasta de resultados gerados localmente. Na execução local, o Projeto 4 também exige `projeto-4/dados/particoes.csv` e as radiografias em `dados/Normal/`, `dados/Pneumonia/` e `dados/COVID-19/`. A pasta `projeto-4/dados/` está incluída no Git, com as 1.200 radiografias, o manifesto, as contagens e a política da coorte. Os notebooks geram pastas `resultados/`; o Projeto 4 também usa `cache/`. Dados, caches e checkpoints não estão incorporados ao PDF.
 
 ## Resultados registrados
 

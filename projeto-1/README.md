@@ -1,46 +1,34 @@
 # Projeto 1 — ViT para classificação de frutas
 
-O notebook `A1_vision_transformers.ipynb` compara um ViT didático treinado do zero com `google/vit-base-patch16-224-in21k`. O código usa nomes próprios em português e explicações curtas antes de cada etapa.
+[Visão geral do repositório](../README.md) · [Relatório consolidado](../relatorio/Projeto_da_Disciplina.pdf)
+
+O [notebook A1](A1_vision_transformers.ipynb) compara um ViT didático treinado do zero com `google/vit-base-patch16-224-in21k`, em um recorte fixo de 20 classes do Fruits-360, que inclui frutas e pimentões. Não há comparação experimental com CNN.
 
 ## Executar
 
-Use o Python do ambiente local com as dependências de `requirements.txt`. Abra o notebook a partir desta pasta e execute de cima para baixo em um kernel novo. O treinamento requer CUDA. A execução v3 registra o hardware efetivamente usado, sem requisito de T4/Colab.
+Instale as dependências de [requirements.txt](requirements.txt), selecione o kernel local e execute as células em ordem, em um kernel novo, a partir de `projeto-1/`. O notebook exige CUDA e interrompe a execução se ela estiver ausente. A referência registrada é Windows, Python 3.12 e RTX 3050 Laptop de 6 GB; não há exigência de T4/Colab. O cabeçalho informa estimativas de RAM, VRAM e tempo, sem medições consolidadas de pico.
 
-O ViT didático usa patches 16 × 16, dimensão 192, seis blocos e seis heads com projeções próprias. Treina por até 15 épocas, com early stopping de três épocas pelo F1 macro. O ViT pré-treinado usa batch 1, acumulação de 16 passos e mixed precision: até duas épocas para a cabeça e cinco para fine-tuning.
+O ViT didático usa patches 16 × 16, dimensão 192, seis blocos e seis heads com projeções próprias. Usa batch 16, AdamW, mixed precision e até 15 épocas; o early stopping tem paciência de três épocas pelo F1 macro de validação. O ViT pré-treinado usa batch 1, acumulação de 16 passos, mixed precision e gradient checkpointing: até duas épocas para a cabeça e cinco para fine-tuning do backbone, com paciência de duas épocas.
 
-## Dados e resultados
+## Dados e protocolo
 
-Fonte: [Fruits-360](https://www.kaggle.com/datasets/moltean/fruits/), de Horea Mureșan e Mihai Oltean, licença [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). O download usa KaggleHub. Preservamos o Test oficial; a validação é 15% do Training, estratificada com semente 42, para o recorte fixo de 20 classes.
+Fonte: [Fruits-360](https://www.kaggle.com/datasets/moltean/fruits/), de Horea Mureșan e Mihai Oltean, licença [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). O notebook reutiliza a versão 107 quando completa no cache oficial do KaggleHub; caso contrário, solicita o download. Seleciona a coleção de imagens 100 × 100 e redimensiona para 224 × 224.
 
-As saídas do notebook documentam curvas, tabela comparativa, métricas por classe, erros e heatmap de um head individual. A execução corrigida salva checkpoints e tabelas auxiliares em `resultados/v3/`, ignorado pelo Git. Artefatos anteriores não são sobrescritos.
-
-A comparação não inclui uma CNN. Attention maps não são provas causais. O fundo uniforme e a captura controlada limitam a generalização para cenas reais.
-
+Preserva o Test oficial com 3.634 imagens. O Training tem 10.856 imagens, dividido em 9.227 de treino e 1.629 de validação, com estratificação e semente 42. Augmentation fica restrita ao treino. O maior F1 macro de validação seleciona os checkpoints; o teste não orienta a seleção.
 
 ## Resultado da execução v3 — 08/10/2026
 
 | Modelo | Accuracy no Test | F1 macro |
 |---|---:|---:|
-| ViT do zero | 99.6147% | 0.9968 |
-| ViT pré-treinado | 99.0919% | 0.9908 |
+| ViT do zero | 99,6147% | 0,9968 |
+| ViT pré-treinado | 99,0919% | 0,9908 |
 
-Cada fase restaurou os 200 tensores do checkpoint selecionado pela validação, sem chaves ausentes, inesperadas ou incompatíveis. O F1 macro recalculado coincidiu com o registrado (cabeca: 0.982092, fine_tuning: 1.000000). Os resultados atuais estão em `resultados/v3/`; os v2 permanecem como histórico.
+Cada fase do **ViT pré-treinado** restaurou os 200 tensores do checkpoint selecionado, sem chaves ausentes, inesperadas ou incompatíveis. A conversão usa `from_pretrained`, seguida de `load_state_dict(strict=True)` e conferência de igualdade dos tensores. O F1 macro recalculado na validação coincidiu com o registrado: cabeça 0,982092 e fine-tuning 1,000000.
 
-## Resultado histórico da execução v2
+O notebook registra curvas, métricas por classe, comparação, erros e attention maps de uma head individual. Parte das figuras aparece nas saídas apenas como objeto de visualização; sua presença não garante que os pixels estejam incorporados ao notebook. Métricas, checkpoints e tabelas auxiliares são gravados em `resultados/v3/`, ignorado pelo Git e ausente deste checkout. Reexecutar pode substituir arquivos da v3; o caminho não cria uma nova versão automaticamente.
 
-Estes valores são registros anteriores à correção da restauração incompatível. Eles não comprovam a avaliação do melhor checkpoint e não substituem a comparação validada da execução v3 acima.
+## Histórico e limitações
 
-| Modelo | Accuracy no Test | F1 macro |
-|---|---:|---:|
-| ViT do zero | 99.6147% | 0.9968 |
-| ViT pré-treinado | 100.0000% | 1.0000 |
+A execução v2 registrou 99,6147% para o ViT do zero e 100% para o pré-treinado. Esses valores precedem a correção da restauração incompatível e não comprovam a avaliação do melhor checkpoint; a comparação válida é a v3 acima. O hardware registrado foi NVIDIA GeForce RTX 3050 6GB Laptop GPU, com PyTorch 2.9.0+cu130.
 
-Hardware: NVIDIA GeForce RTX 3050 6GB Laptop GPU; PyTorch 2.9.0+cu130.
-
-
-## Entrega padronizada
-
-O notebook `A1_vision_transformers.ipynb` fica nesta pasta. Execute-o a partir desta pasta. O início do notebook informa RAM, VRAM e tempo estimado para o ambiente local.
-
-A restauração corrigida usa a conversão oficial do Transformers, rejeita chaves ausentes ou incompatíveis e confere todos os tensores após `load_state_dict(strict=True)`. Os resultados v2 apresentados são históricos; o notebook atualizado apresenta a nova execução.
-
+Attention maps não são provas causais nem segmentações. O fundo uniforme e a captura controlada limitam a generalização para cenas reais. O resultado de uma divisão não comprova superioridade geral de uma arquitetura.

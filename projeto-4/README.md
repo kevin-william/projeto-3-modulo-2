@@ -1,16 +1,41 @@
 # Projeto 4 — cGAN e estudos de caso
 
-Implementação das atividades 4.1 e 4.2, com os arquivos organizados nesta pasta.
+[Visão geral do repositório](../README.md) · [Relatório consolidado](../relatorio/Projeto_da_Disciplina.pdf)
 
-## Entregas
+## Entregas e organização
 
-- `A4_estudo_caso_raio_x.ipynb`: notebook executado com código completo da cGAN, bloco A de treinamento com originais, bloco B com originais e sintéticos, comparação de Recall e ablação pareada.
-- `atividade_4_1_plano_de_acao.docx`: cinco problemas, impactos clínicos, plano integrado, protocolo e resultados atuais.
-- `atividade_4_2_trafego_urbano.docx`: análise textual dos quatro problemas de tráfego, impactos, soluções e plano de avaliação. Não há implementação de trânsito.
+- [A4 — Estudo de caso de raio-X](A4_estudo_caso_raio_x.ipynb): implementação completa da cGAN, classificadores EfficientNet-B0 com originais versus originais e sintéticos, comparação de Recall e ablação pareada.
+- [Atividade 4.1 — Plano de ação](atividade_4_1_plano_de_acao.docx): cinco problemas, impactos clínicos, plano integrado, protocolo e resultados da análise anterior.
+- [Atividade 4.2 — Tráfego urbano](atividade_4_2_trafego_urbano.docx): quatro problemas, impactos, soluções e plano de avaliação. É uma análise textual; não há implementação de trânsito.
 
-## Resultados históricos da execução de 05/10/2026
+Esses arquivos, `README.md` e `requirements.txt` são as entregas versionadas nesta pasta. O relatório consolidado fica em `../relatorio/Projeto_da_Disciplina.pdf` e inclui a execução de 08/10/2026 e a ablação; os DOCX preservam a análise anterior.
 
-A execução `resultados/20261005_234446` utilizou NVIDIA GeForce RTX 3050 6GB Laptop GPU e PyTorch 2.9.0+cu130. Foram treinadas 60 épocas da cGAN, geradas 86 imagens condicionadas em COVID e executados seis classificadores EfficientNet B0, com 12 épocas e 324 atualizações cada.
+Localmente, `dados/` contém a coorte e o manifesto; `cache/` guarda pesos e arquivos temporários; `resultados/` recebe registros, métricas, previsões, imagens e checkpoints. A pasta `dados/` foi restaurada no workspace em 09/10/2026, mas está fora do conjunto de arquivos versionados nesta revisão. As pastas das execuções históricas citadas abaixo não estão presentes neste checkout. O notebook contém toda a implementação, sem exigir scripts externos, e grava registros estruturados em `.txt` e tabelas em CSV.
+
+## Executar e pré-requisitos
+
+Instale as dependências de [requirements.txt](requirements.txt), selecione o kernel local e execute as células em ordem. A referência registrada usa Python 3.12 e PyTorch 2.9.0+cu130. O arquivo fixa wheels `+cu130` de PyTorch e torchvision; a instalação precisa de uma fonte compatível com essas versões. Jupyter Lab não consta nesse arquivo: use o suporte a notebooks do VS Code ou instale o editor separadamente.
+
+Execute a partir de `projeto-4/` ou da raiz do repositório. A primeira célula de código exige `projeto-4/dados/particoes.csv` (ou `dados/particoes.csv`, quando executada nesta pasta). Embora exista uma busca posterior por manifestos históricos, ela não substitui esse requisito inicial.
+
+A coorte local contém 1.200 radiografias: 840 Normal, 240 Pneumonia e 120 COVID-19, em `dados/Normal/`, `dados/Pneumonia/` e `dados/COVID-19/`. A conferência da restauração encontrou todos os arquivos, 1.200 hashes SHA-256 únicos e nenhuma divergência com o manifesto. O notebook também verifica legibilidade e separação de grupos e hashes perceptuais entre partições.
+
+| Classe | Treino | Validação | Teste |
+|---|---:|---:|---:|
+| Normal | 600 | 120 | 120 |
+| Pneumonia | 171 | 34 | 35 |
+| COVID-19 | 86 | 17 | 17 |
+| Total | 857 | 171 | 172 |
+
+O manifesto congelado não é redefinido a partir dos resultados. Os registros de origem e política disponíveis ficam em `dados/politica_coorte_v2.txt`; a restauração não resolve as pendências de direitos, desidentificação ou independência por paciente.
+
+CUDA é utilizada quando disponível; o código aceita CPU com dois threads. Os tempos relatados são da GPU RTX 3050 de 6 GB. O cabeçalho apresenta estimativas de recursos. Os padrões de `EPOCAS_GAN` e `EPOCAS_CLASSIFICADOR` são 60 e 12; podem ser definidos no ambiente antes da execução. A GAN usa resolução 128 e o classificador 160 pixels.
+
+O notebook cria `resultados/AAAAMMDD_HHMMSS/` e não sobrescreve uma pasta existente. Os pesos ImageNet de EfficientNet-B0 são reutilizados do cache ou baixados; se isso falhar, o notebook solicita o checkpoint em `cache/torch/hub/checkpoints/efficientnet_b0_rwightman-7f5810bc.pth`. A GAN e os classificadores recebem treinamento novo. Após importar Matplotlib, o notebook remove o índice de fontes JSON do cache local, mantendo-o em memória.
+
+## Execução atual — 08/10/2026
+
+As saídas preservadas do notebook correspondem a `resultados/20261008_191210`. A execução treinou a GAN principal por 60 épocas, gerou 86 imagens condicionadas em COVID-19 e treinou seis classificadores por 12 épocas e 324 atualizações cada.
 
 | Semente | Recall com originais | Recall com sintéticos | Diferença em pontos percentuais |
 |---|---:|---:|---:|
@@ -19,57 +44,30 @@ A execução `resultados/20261005_234446` utilizou NVIDIA GeForce RTX 3050 6GB L
 | 2028 | 76,47% | 82,35% | +5,88 |
 | Média | 80,39% | 80,39% | 0,00 |
 
-Os sintéticos não trouxeram ganho médio de Recall neste teste interno. O intervalo bootstrap pareado de 95% da diferença média vai de -9,80 a +7,84 pontos percentuais; a igualdade da média não comprova equivalência. O teste contém 17 imagens COVID. Os modelos são condicionados à mesma GAN e o bootstrap não incorpora nova coleta nem treinamento de novas GANs.
+A única intervenção intencional entre os braços é a inclusão de sintéticos no treino. Partições, pesos iniciais por semente, orçamento de atualizações, pesos de classe, augmentation e critério de seleção são iguais. O primeiro maior F1 macro de validação define o checkpoint; o teste não seleciona modelos ou candidatos.
 
-O split tem 857 reais no treino, 171 na validação e 172 no teste. Usamos o split congelado anterior, sem redefini-lo com base nos resultados. A única intervenção intencional entre os braços é a inclusão de sintéticos; partições, pesos iniciais por semente, orçamento, pesos de classe, augmentation e critério de seleção são os mesmos. A primeira época com maior F1 macro de validação define o checkpoint. O teste não seleciona modelos ou candidatos.
+Os sintéticos não trouxeram ganho médio de Recall no teste interno. O intervalo bootstrap pareado de 95% da diferença média vai de -9,80 a +7,84 pontos percentuais; igualdade das médias não comprova equivalência. O teste contém apenas 17 imagens COVID. O bootstrap é condicionado aos modelos e à mesma GAN, sem nova coleta ou treinamento de novas GANs.
 
-## Limites observados
+## Ablação pareada — rubrica 5.3
 
-Os grupos são de similaridade perceptual, sem IDs clínicos. A independência por paciente não está comprovada. Persistem as pendências de origem, direitos e desidentificação descritas nos registros da coorte anterior, preservados na pasta de execução, com os registros estruturados convertidos para texto legível. Os sintéticos apresentam artefatos de textura e anatomia pouco definida; não receberam revisão clínica. Condicionar o gerador em COVID não certifica a patologia. O resultado não autoriza uso clínico nem demonstra generalização externa.
+A referência sem normalização espectral nem suavização é comparada ao pacote com ambas as estratégias, em três sementes. Cada configuração recebeu 60 épocas e 26 passos por época, com estados iniciais e partições iguais em cada par. A janela das dez últimas épocas foi definida antes dos resultados.
 
-A nova execução de 08/10/2026 inclui ablação pareada de normalização espectral e suavização, com evidência quantitativa descrita abaixo. Os DOCX preservam a análise anterior; o notebook reúne as evidências atuais da rubrica 5.3.
+| Diagnóstico médio na janela final | Referência | Mitigação |
+|---|---:|---:|
+| Posto efetivo | 8,6336 | 9,0151 |
+| Saturação | 2,1354% | 0% |
+| Distância RMS entre pares | 0,1908 | 0,1880 |
 
-## Organização da pasta
+O posto efetivo aumentou 4,42%, com aumento nos três pares. A distância RMS não melhorou uniformemente. Não houve divergência não finita nem pares quase idênticos pelo corte RMS de 0,02 na janela final. As grades mostram repetição estrutural e artefatos, compatíveis com diversidade reduzida ou colapso parcial, sem comprovar colapso completo. A referência exploratória de 64 imagens COVID reais de treino tem posto efetivo 16,3471.
 
-Na raiz são mantidos somente estes arquivos:
+A execução principal e a ablação levaram cerca de 23,1 minutos na RTX 3050; a referência real e a figura de grades foram executadas depois, sem novos treinos. Curvas, protocolos, tabelas e grades são gravados em `resultados/20261008_191210/ablacao/`, aparecem nas saídas do notebook e estão discutidos no relatório consolidado. Esses caminhos identificam a execução histórica, não pastas disponíveis neste checkout.
 
-- `README.md`
-- `requirements.txt`
-- `A4_estudo_caso_raio_x.ipynb`
-- `atividade_4_1_plano_de_acao.docx`
-- `atividade_4_2_trafego_urbano.docx`
+## Histórico e limitações
 
-As pastas `resultados`, `cache` e `dados` são mantidas. Não há arquivos `.json` ou scripts `.py`, inclusive dentro dessas pastas. O notebook contém toda a implementação e grava novos registros em `.txt`. Os CSVs, imagens e checkpoints permanecem como evidências do experimento.
+A execução de 05/10/2026, identificada como `resultados/20261005_234446`, registrou os mesmos recalls por semente e a mesma média. Seus registros de verificações e revisão visual dos DOCX são históricos; não foram repetidos nesta revisão de documentação.
 
-## Executar o notebook
+Os grupos são de similaridade perceptual, sem independência por paciente comprovada. Os sintéticos apresentam artefatos de textura e anatomia pouco definida, sem revisão clínica; condicionar o gerador em COVID não certifica patologia. A melhora da ablação é modesta, restrita aos diagnósticos de treinamento, e avalia as duas estratégias juntas. O resultado não demonstra qualidade anatômica, utilidade clínica ou generalização externa.
 
-Abra `A4_estudo_caso_raio_x.ipynb` na pasta `projeto-4`, selecione o kernel do ambiente local `.venv` e execute as células em ordem. As dependências utilizadas estão em `requirements.txt`. Não são necessários scripts externos.
+## Conversão dos documentos no Windows
 
-Antes de executar, os valores `EPOCAS_GAN` e `EPOCAS_CLASSIFICADOR` podem ser configurados no ambiente; os padrões são 60 e 12. O notebook cria uma nova subpasta em `resultados`, registra o dispositivo usado e imprime o caminho. Ele não sobrescreve a execução apresentada neste relatório. Após importar o Matplotlib, remove o índice de fontes em JSON do cache; o índice continua disponível em memória.
-
-As imagens estão organizadas em `dados/`. Para manter a partição congelada, o notebook lê o manifesto em `dados/particoes.csv` (com cópia preservada dos registros da coorte anterior em `.txt`). Nenhum JSON é copiado para esta pasta. Somente os pesos ImageNet locais foram reaproveitados; a GAN e os classificadores recebem treinamento novo.
-
-## Resultados e verificações
-
-A execução concluída está em `resultados/20261005_234446`. Seus metadados e resumo estão em arquivos `.txt`; métricas e previsões continuam em CSV. A conversão preservou os valores dos registros e não executou novos treinos. As saídas do notebook correspondem à execução concluída em 05/10/2026. Referências a nomes de registros anteriores nos documentos ou nas saídas históricas descrevem a organização usada naquela execução; os registros atuais estão em texto.
-
-As conferências de métricas, partições, inicializações, orçamento e checkpoints estão preservadas em `resultados/20261005_234446/verificacoes`. A primeira tentativa interrompida permanece identificada em sua própria pasta, sem métricas experimentais.
-
-Os dois DOCX foram corrigidos, renderizados com LibreOffice 26.8.0.3 e inspecionados em todas as dez páginas: seis da atividade 4.1 e quatro da atividade 4.2. A revisão visual foi aprovada, sem cortes ou sobreposições, e as auditorias de acessibilidade não encontraram ocorrências. Os PDFs, PNGs e o registro da revisão estão em `resultados/20261005_234446/verificacao_visual`, como evidências internas. Os DOCX preservados na raiz são os documentos finais.
-
-## LibreOffice local
-
-A instalação fica em `C:\Program Files\LibreOffice`; o executável é `C:\Program Files\LibreOffice\program\soffice.exe`. O caminho foi adicionado ao PATH do usuário e registrado nas instruções globais em `C:\Users\lord_\.codex\AGENTS.md`. A descoberta pelo caminho absoluto foi testada também com PATH vazio. Essa configuração persistente continua válida após a remoção dos scripts auxiliares desta entrega. Para novas conversões, usar o executável absoluto e um perfil temporário isolado, preservando o perfil pessoal.
-
-
-## Execução atual e rubrica 5.3 — 08/10/2026
-
-O notebook foi executado novamente, incluindo a GAN principal e os seis classificadores. A execução atual está em `resultados/20261008_191210`; o Recall médio voltou a ser 80,39% em ambos os braços. A execução principal e a ablação demoraram 23,1 minutos na RTX 3050 de 6 GB; a referência real e a figura de grades foram executadas em seguida, sem novos treinos.
-
-A ablação compara referência sem normalização espectral/sem suavização com o pacote de mitigação, em três sementes. Cada configuração recebeu 60 épocas e 26 passos por época; os hashes dos estados iniciais e partições são iguais dentro de cada par. A janela de análise (dez últimas épocas) foi definida antes do resultado.
-
-O posto efetivo médio aumentou de 8,6336 para 9,0151 (+4,42%), com aumento nos três pares. A saturação média caiu de 2,1354% para 0%. A distância RMS média entre pares não melhorou uniformemente: 0,1908 na referência e 0,1880 na mitigada. Não houve divergência não finita nem pares quase idênticos pelo corte RMS de 0,02 na janela final. As grades têm repetição estrutural e artefatos, sinais compatíveis com diversidade reduzida/colapso parcial, sem comprovar colapso completo. A referência exploratória com 64 imagens COVID reais de treino tem posto efetivo 16,3471.
-
-A melhora demonstrada é modesta e restrita aos diagnósticos de treinamento; não confirma qualidade anatômica ou ganho clínico. A comparação avalia as duas estratégias juntas. Curvas, tabelas, protocolos e grades estão em `resultados/20261008_191210/ablacao/` e aparecem no notebook.
-
-O notebook `A4_estudo_caso_raio_x.ipynb` executa a partir desta pasta ou da raiz do repositório. Seu cabeçalho informa RAM, VRAM e tempo estimado. O PDF único ficou fora desta revisão por solicitação explícita do usuário.
+Para novas conversões, use `C:\Program Files\LibreOffice\program\soffice.exe` (ou `soffice.com` para saída de console), conferindo o caminho absoluto. Utilize um perfil temporário isolado dentro da pasta de trabalho para preservar o perfil pessoal e os documentos abertos. A instalação local foi explicitamente autorizada pelo usuário.

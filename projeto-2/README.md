@@ -1,41 +1,37 @@
 # Projeto 2 — Ranking e busca com CLIP
 
-O notebook `A2_clip_ads16.ipynb` usa `openai/clip-vit-base-patch32` em avaliação e sem gradientes. Não há treino ou fine-tuning.
+[Visão geral do repositório](../README.md) · [Relatório consolidado](../relatorio/Projeto_da_Disciplina.pdf)
+
+O [notebook A2](A2_clip_ads16.ipynb) usa `openai/clip-vit-base-patch32` em avaliação e sem gradientes. Não há treino ou fine-tuning. A implementação compara embeddings normalizados de anúncios e textos, conta correspondências para 20 conceitos fixos e retorna cinco imagens distintas para cada uma de oito consultas.
 
 ## Executar
 
-Use o ambiente local e as dependências de `requirements.txt`. Execute as células em ordem em um kernel novo, a partir desta pasta. CUDA é usada quando disponível; o notebook também aceita CPU e registra o dispositivo.
+Instale as dependências de [requirements.txt](requirements.txt), selecione o kernel local e execute as células em ordem em um kernel novo, a partir de `projeto-2/`. CUDA é usada quando disponível; CPU também é aceita. O batch de inferência é 32. O cabeçalho apresenta estimativas de recursos e duração.
 
-O código cobre dados, 20 descrições fixas, embeddings normalizados, comparação de thresholds, ranking, cinco conceitos líderes e oito consultas, com cinco imagens distintas por consulta. A seção adicional de attention maps foi removida por não ser necessária às rubricas de CLIP.
+O dataset é reutilizado quando encontrado no cache oficial do KaggleHub ou baixado quando necessário. Os pesos CLIP também precisam estar em cache ou ser obtidos pela biblioteca Transformers.
 
 ## Dados e interpretação
 
-Fonte: [ADS-16 no Kaggle](https://www.kaggle.com/datasets/groffo/ads16-dataset), associado a [Personality in Computational Advertising: A Benchmark](https://ceur-ws.org/Vol-1680/paper3.pdf). Preserve as condições de uso da fonte. São 20 categorias de 15 anúncios: 300 imagens únicas. O pacote inclui um slot excedente `1/16`; sua exclusão autorizada é conferida e registrada. O corpus diverge do enunciado antigo que citava 16 categorias e 500 imagens; não duplicamos imagens para atingir esse número.
+Fonte: [ADS-16 no Kaggle](https://www.kaggle.com/datasets/groffo/ads16-dataset), associado a [Personality in Computational Advertising: A Benchmark](https://ceur-ws.org/Vol-1680/paper3.pdf). Preserve as condições de uso da fonte. O corpus auditado contém 20 categorias de 15 anúncios: 300 imagens únicas. O pacote inclui um slot excedente `1/16`; sua exclusão autorizada é conferida e registrada. O corpus diverge do enunciado antigo de 16 categorias e 500 imagens; não são duplicadas imagens para atingir esse número.
 
-Comparamos thresholds 0,20, 0,25 e 0,30 e mantemos 0,25 para o ranking. Frequência semântica significa quantidade acima do corte; não é contagem validada de objetos. Similaridade não é probabilidade calibrada.
+São comparados os cortes 0,20, 0,25 e 0,30; o ranking usa similaridade maior ou igual a 0,25. Frequência semântica é a quantidade acima do corte, sem anotação manual de objetos. Similaridade não é probabilidade calibrada. A implementação não inclui attention maps.
 
-Figuras, ranking, consultas e ambiente atuais ficam em `resultados/v3/`, ignorado pelo Git; a v2 foi preservada como histórico. As análises no notebook devem corresponder às imagens e aos scores da nova execução.
+## Resultado da execução v3 — 08/10/2026
 
+| Conceito | Imagens com similaridade ≥ 0,25 |
+|---|---:|
+| `isolated_product` | 197/300 |
+| `people_using_product` | 164/300 |
+| `text_logo` | 114/300 |
+| `package` | 75/300 |
+| `person` | 56/300 |
 
-## Resultado histórico da execução v2
+A execução v3 foi concluída em CPU local com dois threads. A inferência e as figuras levaram cerca de 66 segundos, além da inicialização do Python e das bibliotecas. A ordem dos líderes e os caminhos das oito buscas não mudaram em relação à v2. `people_using_product` contou 164/300, contra 163/300 na v2 em CUDA; uma imagem próxima do corte mudou de lado devido às diferenças numéricas entre dispositivos. O hardware da v2 foi RTX 3050 Laptop de 6 GB, com PyTorch 2.9.0+cu130.
 
-Conceitos líderes com threshold 0,25: `isolated_product` (197/300), `people_using_product` (163/300), `text_logo` (114/300), `package` (75/300), `person` (56/300). A frequência mede correspondência semântica, sem anotação manual de objetos.
+## Inspeção visual e artefatos
 
-Hardware: NVIDIA GeForce RTX 3050 6GB Laptop GPU; PyTorch 2.9.0+cu130.
+O notebook mantém o top-3 automático por conceito, inclusive falsos positivos. Produto isolado e pessoas usando produto não são confirmados integralmente nesses três líderes; isso não demonstra ausência no corpus inteiro. Pessoa, embalagem e texto/logotipo têm exemplos confirmados.
 
+A galeria complementar registra um positivo inspecionado por conceito, sem alterar o ranking: relógio isolado (13/7, score 0,257), jogador usando calçados (18/12, 0,273), texto/logotipo Fiat (2/11, 0,312), embalagem Colgate (4/14, 0,294) e pessoa no Badoo (20/11, 0,313). A presença nesses cinco exemplos não valida todas as contagens semânticas.
 
-## Entrega padronizada
-
-O notebook `A2_clip_ads16.ipynb` fica nesta pasta. Execute-o a partir desta pasta. O início do notebook informa RAM, VRAM e tempo estimado para o ambiente local.
-
-A seção de conceitos líderes inclui uma tabela de confirmação visual por caminho. Produto isolado e pessoas usando produto não são confirmados integralmente nos três líderes; essa insuficiência é explícita, sem concluir ausência no corpus inteiro. Pessoa, embalagem e texto/logotipo têm exemplos visualmente confirmados.
-
-
-## Revisão executada em 08/10/2026
-
-A execução atual está em `resultados/v3/` e foi concluída em CPU local com dois threads, preservando o corpus, prompts, consultas e corte de 0,25. A inferência e as figuras levaram cerca de 66 segundos, além da inicialização do Python e das bibliotecas. A ordem dos líderes e os caminhos das oito buscas não mudaram. `people_using_product` contou 164/300, contra 163/300 na execução CUDA v2: uma imagem próxima do corte mudou de lado devido às diferenças numéricas entre dispositivos.
-
-A galeria complementar apresenta um positivo inspecionado por conceito, sem substituir os falsos positivos do top-3 ou alterar o ranking. Todos os cinco ficaram acima do corte: relógio isolado (13/7, score 0,257), jogador usando calçados (18/12, 0,273), texto/logotipo Fiat (2/11, 0,312), embalagem Colgate (4/14, 0,294) e pessoa no Badoo (20/11, 0,313). Imagem, caminho, SHA-256, score e critério visual estão em `resultados/v3/figuras/conceitos/confirmacoes_visuais.csv` e aparecem no notebook.
-
-O arquivo `A2_clip_ads16.ipynb` foi sincronizado com essa execução. A presença visual nesses cinco casos não valida todas as ocorrências semânticas do ranking.
-
+Ranking, consultas, ambiente e figuras são gravados em `resultados/v3/`, ignorado pelo Git e ausente deste checkout. A tabela de confirmações é `resultados/v3/figuras/conceitos/confirmacoes_visuais.csv`. Os caminhos descrevem saídas locais da execução; o relatório consolidado incorpora as evidências utilizadas. Reexecutar pode substituir arquivos na v3, sem criar uma nova pasta de versão.
